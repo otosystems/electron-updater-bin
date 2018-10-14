@@ -8,5 +8,5 @@ export declare class AppImageUpdater extends BaseUpdater {
     checkForUpdatesAndNotify(): Promise<UpdateCheckResult | null>;
     /*** @private */
     protected doDownloadUpdate(downloadUpdateOptions: DownloadUpdateOptions): Promise<Array<string>>;
-    protected doInstall(installerPath: string, isSilent: boolean, isRunAfter: boolean): boolean;
+    protected doInstall(installerPath: string, isSilent: boolean, isRunAfter: boolean): Promise<boolean>;
 }

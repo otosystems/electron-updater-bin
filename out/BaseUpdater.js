@@ -67,7 +67,7 @@ class BaseUpdater extends _AppUpdater().AppUpdater {
     try {
       this._logger.info(`Install: isSilent: ${isSilent}, isRunAfter: ${isRunAfter}`);
 
-      return this.doInstall(installerPath, isSilent, isRunAfter);
+      return await this.doInstall(installerPath, isSilent, isRunAfter);
     } catch (e) {
       this.dispatchError(e);
       return false;

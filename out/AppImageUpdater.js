@@ -149,7 +149,7 @@ class AppImageUpdater extends _BaseUpdater().BaseUpdater {
     });
   }
 
-  doInstall(installerPath, isSilent, isRunAfter) {
+  async doInstall(installerPath, isSilent, isRunAfter) {
     const appImageFile = process.env.APPIMAGE;
 
     if (appImageFile == null) {

@@ -178,7 +178,7 @@ class NsisUpdater extends _BaseUpdater().BaseUpdater {
     return await (0, _windowsExecutableCodeSignatureVerifier().verifySignature)(Array.isArray(publisherName) ? publisherName : [publisherName], tempUpdateFile, this._logger);
   }
 
-  doInstall(installerPath, isSilent, isForceRunAfter) {
+  async doInstall(installerPath, isSilent, isForceRunAfter) {
     const args = ["--updated"];
 
     if (isSilent) {
@@ -202,7 +202,7 @@ class NsisUpdater extends _BaseUpdater().BaseUpdater {
     };
 
     try {
-      (0, _child_process().spawn)(installerPath, args, spawnOptions).unref();
+      await this._spawn(installerPath, args, spawnOptions);
     } catch (e) {
       // yes, such errors dispatched not as error event
       // https://github.com/electron-userland/electron-builder/issues/1129
@@ -211,7 +211,7 @@ class NsisUpdater extends _BaseUpdater().BaseUpdater {
         this._logger.info("Access denied or UNKNOWN error code on spawn, will be executed again using elevate");
 
         try {
-          (0, _child_process().spawn)(path.join(process.resourcesPath, "elevate.exe"), [installerPath].concat(args), spawnOptions).unref();
+          await this._spawn(path.join(process.resourcesPath, "elevate.exe"), [installerPath].concat(args), spawnOptions);
         } catch (e) {
           this.dispatchError(e);
         }
@@ -221,6 +221,30 @@ class NsisUpdater extends _BaseUpdater().BaseUpdater {
     }
 
     return true;
+  }
+  /**
+   * This handles both node 8 and node 10 way of emitting error when spawing a process
+   *   - node 8: Throws the error
+   *   - node 10: Emit the error(Need to listen with on)
+   */
+
+
+  async _spawn(exe, args, options) {
+    return new Promise((resolve, reject) => {
+      try {
+        const process = (0, _child_process().spawn)(exe, args, options);
+        process.on("error", error => {
+          reject(error);
+        });
+        process.unref();
+
+        if (process.pid !== undefined) {
+          resolve(true);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
   } // private downloadBlockMap(provider: Provider<any>) {
   //   await provider.getBytes(newBlockMapUrl, cancellationToken)
   // }
