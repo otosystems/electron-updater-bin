@@ -1,5 +1,5 @@
 {
-  "name": "electron-updater",
+  "name": "electron-updater-bin",
   "version": "3.1.2",
   "description": "Cross platform updater for electron applications",
   "main": "out/main.js",
